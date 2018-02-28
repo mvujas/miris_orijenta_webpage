@@ -1,0 +1,35 @@
+$primary-header-dark: #a58030;
+$primary-header-light: #f4ead2;
+
+.page-header {
+  .logo {
+    position: absolute;
+    top: 33px;
+    width: 100%;
+    height: 75px;
+    text-align: center;
+    img {
+      height: 100%;
+
+    }
+  }
+  .region-1 {
+    height: 55px;
+    background-color: $primary-header-dark;
+  }
+  .region-2 {
+    height: 100px;
+    background-color: $primary-header-light;
+  }
+  .container {
+    position: relative;
+    .navbar {
+      position: absolute;
+      width: 100%;
+      bottom: 0;
+      .navbar-nav {
+        margin: 0 auto;
+      }
+    }
+  }
+}
