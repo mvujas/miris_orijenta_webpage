@@ -25,11 +25,11 @@ $primary-header-light: #f4ead2;
   }
   .region-1 {
     height: 55px;
-    background-color: $primary-header-dark;
+    background: url('../img/a58030noise.png');
   }
   .region-2 {
     height: 100px;
-    background-color: $primary-header-light;
+    background: url('../img/f4ead2noise.png');
   }
   .container {
     position: relative;
@@ -48,10 +48,17 @@ $primary-header-light: #f4ead2;
   padding: 0;
   margin: 0;
   width: 100%;
+  padding-top: 31.25%;
+  position: relative;
+  display: block;
+  -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
   .carousel-item {
-    display: hidden;
+    display: none;
     width: 100%;
-    position: relative;
+    position: absolute;
+    top: 0;
     &.active {
       display: block;
     }
@@ -73,4 +80,7 @@ $primary-header-light: #f4ead2;
       }
     }
   }
+}
+
+.main {
 }
