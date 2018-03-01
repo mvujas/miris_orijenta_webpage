@@ -1,4 +1,5 @@
 @import 'bootstrap/bootstrap';
+@import 'https://fonts.googleapis.com/css?family=Montserrat';
 
 @mixin transition($property, $duration, $easiness) {
   -webkit-transition: $property $duration $easiness;
@@ -10,8 +11,15 @@
 
 $primary-header-dark: #a58030;
 $primary-header-light: #f4ead2;
+$main-body-color: #faf5ea;
 
+* {
+  font-family: 'Montserrat', sans-serif;
+}
+
+// Navigation and logo
 .page-header {
+  position: relative;
   .logo {
     position: absolute;
     top: 33px;
@@ -32,18 +40,42 @@ $primary-header-light: #f4ead2;
     background: url('../img/f4ead2noise.png');
   }
   .container {
-    position: relative;
+    position: absolute;
+    top: 94px;
+    z-index: 1000;
+    right: 0;
+    left: 0;
+    background: url('../img/f4ead2noise.png');
     .navbar {
-      position: absolute;
-      width: 100%;
-      bottom: 0;
+      padding: 8px 25px;
       .navbar-nav {
         margin: 0 auto;
+      }
+      .socials {
+        padding-right: 3px;
+        @media (min-width: 768px) {
+          position: absolute;
+          right: 0;
+        }
+        img {
+          width: 27px;
+          height: 27px;
+          opacity: 0.6;
+          @include transition(opacity, 400ms, ease);
+          &:hover {
+            opacity: 1;
+          }
+        }
+        .facebook {
+
+        }
       }
     }
   }
 }
 
+
+// Carousel slide show
 .custom-carousel {
   padding: 0;
   margin: 0;
@@ -83,8 +115,42 @@ $primary-header-light: #f4ead2;
 }
 
 .main {
-  padding: 15px 0;
+  background: url('../img/f5ebd6noise.png');
   .centered-desc {
-    text-align: center;
+    padding: 40px 0;
+    .content {
+      margin: 0 auto;
+      text-align: center;
+      max-width: 600px;
+      text-overflow: ellipsis;
+    }
   }
+
+  .content-block {
+    padding: 40px 0;
+  }
+
+  .block-1 {
+    background: url('../img/cc0000noise.png');
+    color: white;
+    .heading-underline:before {
+      border-bottom: 2px solid white;
+    }
+  }
+}
+
+.heading-underline {
+  display: block;
+  width: 100%;
+  &:before {
+    border-bottom: 2px solid black;
+    width: 100px;
+    content: '';
+    display: block;
+    margin: 0 auto 20px auto;
+  }
+}
+
+.centered {
+  text-align: center;
 }
