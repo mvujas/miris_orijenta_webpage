@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Miris Orijenta</title>
 
+    <script src="js/fontawesome-all.min.js" charset="utf-8"></script>
+
     <link rel="stylesheet" href="css/style.min.css">
   </head>
   <body id="top">
@@ -29,6 +31,9 @@
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#about-us">O NAMA</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#products">PROIZVODI</span></a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#contact">KONTAKT</a>
@@ -75,19 +80,144 @@
           </div>
         </div>
 
-        <div id="contact" class="content-block block-1">
+        <div id="products" class="content-block block-1">
+          <div class="container">
+            <div class="centered">
+              <h2>PROIZVODI</h2>
+              <span class="heading-underline"></span>
+            </div>
+            <div class="recommendation">
+              Preporučujemo:
+            </div>
+            <div class="products">
+              <div class="row">
+
+                <div class="col-md-3 col-sm-6">
+                  <a href="#">
+                    <img src="img/food.jpg" alt="">
+                    <div class="hover-anim">
+                      <p>
+                        <i class="fas fa-search"></i><br>
+                        <span class="product-name">Pečena tarantula</span>
+                      </p>
+                    </div>
+                  </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                  <a href="#">
+                    <img src="img/food.jpg" alt="">
+                    <div class="hover-anim">
+                      <p>
+                        <i class="fas fa-search"></i><br>
+                        <span class="product-name">Pečena tarantula</span>
+                      </p>
+                    </div>
+                  </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                  <a href="#">
+                    <img src="img/food.jpg" alt="">
+                    <div class="hover-anim">
+                      <p>
+                        <i class="fas fa-search"></i><br>
+                        <span class="product-name">Pečena tarantula</span>
+                      </p>
+                    </div>
+                  </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                  <a href="#">
+                    <img src="img/food.jpg" alt="">
+                    <div class="hover-anim">
+                      <p>
+                        <i class="fas fa-search"></i><br>
+                        <span class="product-name">Pečena tarantula</span>
+                      </p>
+                    </div>
+                  </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                  <a href="#">
+                    <img src="img/food.jpg" alt="">
+                    <div class="hover-anim">
+                      <p>
+                        <i class="fas fa-search"></i><br>
+                        <span class="product-name">Pečena tarantula</span>
+                      </p>
+                    </div>
+                  </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                  <a href="#">
+                    <img src="img/food.jpg" alt="">
+                    <div class="hover-anim">
+                      <p>
+                        <i class="fas fa-search"></i><br>
+                        <span class="product-name">Pečena tarantula</span>
+                      </p>
+                    </div>
+                  </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                  <a href="#">
+                    <img src="img/food.jpg" alt="">
+                    <div class="hover-anim">
+                      <p>
+                        <i class="fas fa-search"></i><br>
+                        <span class="product-name">Pečena tarantula</span>
+                      </p>
+                    </div>
+                  </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                  <a href="#">
+                    <img src="img/food.jpg" alt="">
+                    <div class="hover-anim">
+                      <p>
+                        <i class="fas fa-search"></i><br>
+                        <span class="product-name">Pečena tarantula</span>
+                      </p>
+                    </div>
+                  </a>
+                </div>
+
+              </div>
+              <div class="products-see-more">
+
+
+                <a href="#" class="btn btn-light red-color">Pogledajte još</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="contact" class="content-block block-2">
           <div class="container">
             <div class="centered">
               <h2>KONTAKT</h2>
               <span class="heading-underline"></span>
             </div>
             <div class="row">
-              <div class="col-md-5">
-
+              <div class="col-md-8" id="map">
               </div>
-              <div class="col-md-7">
+              <div class="col-md-4 contact-info">
+                <p>
+                  <b>Adresa:</b><br>
+                  Bulevar cara Dusana 70<br><br>
 
+                  <b>Radno vreme:</b><br>
+                  00 - 24<br><br>
+
+                  <b>Broj telefona:</b><br>
+                  021390123<br><br>
+
+                  <b>Email:</b><br>
+                  someone@example.com<br><br>
+                </p>
               </div>
+            </div>
+            <div class="footer">
+              Designed by <a href="https://mvujas.github.io/" target="_blank"><span class="author">mvujas</span></a>
             </div>
           </div>
         </div>
@@ -152,6 +282,21 @@
           }
         }
       });
+
+      function initMap() {
+        var uluru = {lat: 45.241745, lng: 19.825136};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 15,
+          center: uluru
+        });
+        var marker = new google.maps.Marker({
+          position: uluru,
+          map: map
+        });
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAw5bYJyrCi4y7RnihFd1BeTBFcBDg_8_w&callback=initMap">
     </script>
   </body>
 </html>

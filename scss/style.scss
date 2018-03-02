@@ -13,6 +13,10 @@ $primary-header-dark: #a58030;
 $primary-header-light: #f4ead2;
 $main-body-color: #faf5ea;
 
+a:hover {
+  text-decoration: none;
+}
+
 * {
   outline: none;
   font-family: 'Montserrat', sans-serif;
@@ -132,10 +136,28 @@ $main-body-color: #faf5ea;
   }
 
   .block-1 {
+    background: url('../img/ff4d4dnoise.png');
+    color: white;
+    .heading-underline:before {
+      border-bottom: 2px solid white;
+    }
+    .recommendation {
+      text-align: center;
+      padding: 0 0 15px 0;
+    }
+  }
+
+  .block-2 {
     background: url('../img/cc0000noise.png');
     color: white;
     .heading-underline:before {
       border-bottom: 2px solid white;
+    }
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 10px 25px 0 25px;
     }
   }
 }
@@ -154,4 +176,82 @@ $main-body-color: #faf5ea;
 
 .centered {
   text-align: center;
+}
+
+.products {
+  .row {
+    & > div {
+      padding: 0;
+      margin: 0;
+      position: relative;
+      img {
+        width: 100%;
+      }
+
+      .hover-anim {
+        opacity: 0;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, .7);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        @include transition(opacity, 500ms, ease);
+        p {
+          color: white;
+          text-align: center;
+          font-size: 25px;
+          line-height: 15px;
+          .product-name {
+            font-size: 15px;
+          }
+        }
+      }
+
+      &:hover .hover-anim {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+#map {
+  width: 100%;
+  height: 350px;
+}
+
+.products-see-more {
+  text-align: center;
+  padding-top: 25px;
+}
+
+.red-color {
+  color: #cc0000;
+  &:hover {
+    color: #cc0000;
+  }
+}
+
+.footer {
+  &:before {
+    content: '';
+    display: block;
+    max-width: 450px;
+    margin: 0 auto;
+    margin-bottom: 5px;
+    border-bottom: 2px solid white;
+  }
+  @media (min-width: 768px) {
+    margin-top: 100px;
+  }
+  padding-top: 10px;
+  text-align: center;
+  color: white;
+  .author {
+    color: white;
+    font-weight: bold;
+  }
 }
