@@ -1,5 +1,8 @@
 <?php
+  require_once 'handlers/userHandler.php';
+
   function printNavigation() {
+    global $current_script;
     ?>
       <!-- Navigation -->
       <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -21,10 +24,10 @@
           <ul class="nav navbar-right navbar-top-links">
               <li class="dropdown">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                      <i class="fa fa-user fa-fw"></i> secondtruth <b class="caret"></b>
+                      <i class="fa fa-user fa-fw"></i> admin <b class="caret"></b>
                   </a>
                   <ul class="dropdown-menu dropdown-user">
-                      <li><a href="logout.php"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                      <li><a href="logout.php"><i class="fa fa-sign-out fa-fw"></i> Odjavi se</a>
                       </li>
                   </ul>
               </li>
@@ -35,7 +38,7 @@
               <div class="sidebar-nav navbar-collapse">
                   <ul class="nav" id="side-menu">
                       <li>
-                          <a href="index.php"<?php if(basename($_SERVER['SCRIPT_FILENAME']) === "index.php") echo "class=\"active\"" ?>><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                          <a href="index.php"<?php if($current_script === "index.php") echo " class=\"active\"" ?>><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                       </li>
                   </ul>
               </div>

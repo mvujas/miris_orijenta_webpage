@@ -1,4 +1,11 @@
-<?php require_once 'parts.php' ?>
+<?php
+  require_once 'parts.php';
+  if(isset($_POST["login"]))
+    $_SESSION["userID"] = "Pera";
+
+  if(isset($_SESSION["userID"]))
+    header("Location: index.php");
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -14,7 +21,7 @@
                             <h3 class="panel-title">Admin panel</h3>
                         </div>
                         <div class="panel-body">
-                            <form role="form">
+                            <form role="form" method="post">
                                 <fieldset>
                                     <div class="form-group">
                                         <input class="form-control" placeholder="Korisničko ime" name="email" type="email" autofocus>
@@ -28,7 +35,7 @@
                                         </label>
                                     </div>
                                     <!-- Change this to a button or input when using this as a form -->
-                                    <a href="index.html" class="btn btn-lg btn-success btn-block">Prijavi se</a>
+                                    <input type="submit" class="btn btn-lg btn-success btn-block" name="login" value="Prijavi se">
                                 </fieldset>
                             </form>
                         </div>
