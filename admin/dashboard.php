@@ -1,4 +1,7 @@
-<?php require_once 'parts.php'; ?>
+<?php
+  require_once 'parts.php';
+  require_once 'database/db_utils.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -27,7 +30,7 @@
                                         <i class="fa fa-tasks fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">12</div>
+                                        <div class="huge"><?php echo countCategories() ?></div>
                                         <div>Kategorija</div>
                                     </div>
                                 </div>

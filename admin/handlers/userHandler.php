@@ -6,10 +6,14 @@
   if($current_script !== "login.php" && !isset($_SESSION["userID"]))
     header("Location: login.php");
 
+  $logged_users_username;
+  if(isset($_SESSION["userID"]))
+    $logged_users_username = getUsernameByID($_SESSION["userID"]);
+
   function loginUser($username, $password) {
     list($user_id, $password_hash) = getUserByUsername($username);
     if($user_id && password_verify($password, $password_hash)) {
-      $_SESSION["userID"] = 123;
+      $_SESSION["userID"] = $user_id;
       return true;
     }
     return false;
