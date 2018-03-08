@@ -128,10 +128,30 @@
 
   function getAllCategories() {
     $connection = connect_to_db();
-    $query = mysqli_query($connection, "SELECT CID, Name From Category");
+    $query = mysqli_query($connection, "SELECT CID, Name FROM Category");
     $result = array();
     while($row = mysqli_fetch_assoc($query))
       $result[] = $row;
+    close($connection);
+    return $result;
+  }
+
+  function getCategoryByID($ID) {
+    $connection = connect_to_db();
+    $statement = mysqli_prepare($connection, "SELECT Name FROM Category WHERE CID = ?");
+    mysqli_stmt_bind_param($statement, "i", $ID);
+    mysqli_stmt_execute($statement);
+    mysqli_stmt_bind_result($statement, $result);
+    mysqli_stmt_fetch($statement);
+    close($connection);
+    return $result;
+  }
+
+  function saveCategoryChanges($ID, $name) {
+    $connection = connect_to_db();
+    $statement = mysqli_prepare($connection, "UPDATE Category SET Name = ? WHERE CID = ?");
+    mysqli_stmt_bind_param($statement, "si", $name, $ID);
+    $result = mysqli_stmt_execute($statement);
     close($connection);
     return $result;
   }

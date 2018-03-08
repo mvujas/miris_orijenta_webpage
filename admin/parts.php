@@ -41,6 +41,9 @@
                       <li>
                           <a href="dashboard.php"<?php if($current_script === "dashboard.php") echo " class=\"active\"" ?>><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                       </li>
+                      <li>
+                          <a href="categories.php"<?php if($current_script === "categories.php") echo " class=\"active\"" ?>><i class="fa fa-tasks fa-fw"></i> Kategorije</a>
+                      </li>
                   </ul>
               </div>
           </div>
