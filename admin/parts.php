@@ -1,5 +1,6 @@
 <?php
   require_once 'handlers/userHandler.php';
+  require_once 'config.php';
 
   function printNavigation() {
     global $current_script;

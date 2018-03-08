@@ -21,7 +21,6 @@
                 <?php
                   if(isset($_GET["edit"])) {
                     $category = getCategoryByID($_GET["edit"]);
-                    var_dump($category);
                 ?>
                   <div class="row">
                       <div class="col-lg-12">
@@ -33,10 +32,10 @@
                   <?php
                     if($category) {
                       if(isset($_POST["saveChanges"])) {
-                        if(!isset($_POST["name"]) || strlen($_POST["name"]) < 5)
+                        if(!isset($_POST["name"]) || strlen($_POST["name"]) < CATEGORY_MIN_NAME_LENGTH)
                           echo "<div class=\"alert alert-danger alert-dismissable\">
                               <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>
-                              Ime kategorije mora imati bar 5 karaktera.
+                              Ime kategorije mora imati bar " .CATEGORY_MIN_NAME_LENGTH. " karaktera.
                           </div>";
                         else if(strcmp($_POST["name"], $category) === 0)
                           echo "<div class=\"alert alert-danger alert-dismissable\">
@@ -101,6 +100,7 @@
                   }
                   else {
                     $categories = getAllCategories();
+
                 ?>
                   <div class="row">
                       <div class="col-lg-12">
@@ -129,12 +129,12 @@
                                             <?php
                                               foreach($categories as &$category)
                                                 echo "
-                                                  <tr>
+                                                  <tr id=\"category-{$category["CID"]}\">
                                                     <td>{$category["Name"]}</td>
                                                     <td>
                                                       <center>
                                                         <a class=\"btn btn-primary\" href=\"categories.php?edit={$category["CID"]}\"><i class=\"fa fa-pencil\"></i> Izmeni</a>
-                                                        <a class=\"btn btn-danger\"><i class=\"fa fa-trash-o\"></i> Obriši</a>
+                                                        <a class=\"btn btn-danger categoryDeleteButton\" data-cid=\"{$category["CID"]}\" data-cname=\"{$category["Name"]}\"><i class=\"fa fa-trash-o\"></i> Obriši</a>
                                                       </center>
                                                     </td>
                                                   </tr>";
@@ -147,26 +147,201 @@
                               <!-- /.panel-body -->
                           </div>
                           <!-- /.panel -->
+
+                          <div id="add-category">
+                            <div class="add-category-error-box"></div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    Dodaj kategoriju
+                                </div>
+                                <div class="panel-body">
+                                    <form role="form" action="categories.php#add-category" method="post">
+                                      <div class="form-group">
+                                        <label>Naziv kategorije</label>
+                                        <input class="form-control" name="name" value="">
+                                      </div>
+                                      <input type="hidden" name="action" value="addCategory">
+                                      <input type="submit" value="Dodaj" class="btn btn-success">
+                                    </form>
+                                </div>
+                                <!-- /.panel-body -->
+                            </div>
+                            <!-- /.panel -->
+                          </div>
+                          <!-- /#add-category -->
                       </div>
                       <!-- /.col-lg-12 -->
                   </div>
                   <!-- /.row -->
+
+
+
+                  <!-- Modal -->
+                  <div id="categoryMainModal" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+
+                      <!-- Modal content-->
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4 class="modal-title">Brisanje kategorije</h4>
+                        </div>
+                        <div class="modal-body">
+                          <div class="modal-error-box"></div>
+                          <p class="warningDeletionMessage"></p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-danger" id="finishCategoryDeletion">Obriši</button>
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Otkaži</button>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
                 <?php } ?>
             </div>
             <!-- /#page-wrapper -->
         </div>
         <!-- /#wrapper -->
 
-
         <?php printJavascript() ?>
         <!-- DataTables JavaScript -->
         <script src="js/dataTables/jquery.dataTables.min.js"></script>
         <script src="js/dataTables/dataTables.bootstrap.min.js"></script>
         <script>
+            var table;
             $(document).ready(function() {
-              $('#categoriesTable').DataTable({
+              table = $('#categoriesTable').DataTable({
                 responsive: true
               });
+            });
+
+            var modal = {
+              target: $("#categoryMainModal"),
+              bodyText: $("#categoryMainModal .warningDeletionMessage"),
+              errorBox: $("#categoryMainModal .modal-error-box"),
+              setBodyMessage: function(message) {
+                this.bodyText.html(message);
+              },
+              setError: function(content) {
+                this.errorBox.html(content);
+              },
+              show: function() {
+                this.target.modal("show");
+              },
+              close: function() {
+                this.target.modal("hide");
+              }
+            };
+
+            var deletion = {
+              targetID: undefined,
+              prepare: function(ID, name) {
+                this.targetID = ID;
+                modal.setBodyMessage("Da li ste sigurni da zelite da obrisete kategoriju \"" + name + "\"?<br>Sa njom ćete obrisati i sve proizvode unutar nje.");
+                modal.show();
+              },
+              finish: function() {
+                var del = this;
+                var categoryID = this.targetID;
+                if(categoryID === undefined) {
+                  modal.setError("<div class=\"alert alert-danger alert-dismissable\">" +
+                    "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
+                    "Ni jedna kategorija ne čeka na brisanje." +
+                    "</div>");
+                  return;
+                }
+                $.ajax({
+                  url: 'handlers/ajaxHandler.php',
+                  type: 'post',
+                  dataType: 'json',
+                  data: 'action=deleteCategory&cid=' + categoryID,
+                  success: function(result) {
+                    if(result.success) {
+                      table.row($("#category-" + categoryID)).remove().draw();
+                      del.targetID = undefined;
+                      modal.setError("<div class=\"alert alert-success alert-dismissable\">" +
+                        "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
+                        "Kategorija je uspešno obrisana." +
+                        "</div>");
+                    }
+                    else
+                      modal.setError("<div class=\"alert alert-danger alert-dismissable\">" +
+                        "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
+                        "Došlo je do greške prilikom brisanja kategorije." +
+                        "</div>");
+                  },
+                  error: function() {
+                    modal.setError("<div class=\"alert alert-danger alert-dismissable\">" +
+                      "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
+                      "Došlo je do greške prilikom brisanja kategorije." +
+                      "</div>");
+                  }
+                });
+              },
+              reset: function() {
+                this.targetID = undefined;
+                modal.setBodyMessage("");
+                modal.setError("");
+              }
+            };
+            modal.target.on('hidden.bs.modal', function () {
+              deletion.reset();
+            });
+
+            $("#finishCategoryDeletion").click(function() {
+              deletion.finish();
+            });
+
+
+            $(".categoryDeleteButton").click(function() {
+              var categoryID = $(this).data("cid");
+              var categoryName = $(this).data("cname");
+              deletion.prepare(categoryID, categoryName);
+            });
+
+            var addCategoryErrorBox = {
+              target: $(".add-category-error-box"),
+              setError: function(result) {
+                this.target.html(result);
+              }
+            };
+
+            $("#add-category form").submit(function(e) {
+              e.preventDefault();
+              var data = $(this).serialize();
+              $.ajax({
+                url: 'handlers/ajaxHandler.php',
+                type: 'post',
+                dataType: 'json',
+                data: data,
+                success: function(result) {
+                  console.log(result);
+                  if(result.success) {
+                    if(result.data.error)
+                      addCategoryErrorBox.setError("<div class=\"alert alert-danger alert-dismissable\">" +
+                        "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
+                        result.data.error +
+                        "</div>");
+                    else {
+                      location.reload();
+                       $(window).scrollTop(0);
+                    }
+                  }
+                  else
+                  modal.setError("<div class=\"alert alert-danger alert-dismissable\">" +
+                    "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
+                    "Došlo je do greške prilikom dodavanja kategorije." +
+                    "</div>");
+                },
+                error: function() {
+                  modal.setError("<div class=\"alert alert-danger alert-dismissable\">" +
+                    "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
+                    "Došlo je do greške prilikom dodavanja kategorije." +
+                    "</div>");
+                }
+              });
+
             });
         </script>
 

@@ -10,7 +10,7 @@ CREATE TABLE User (
 
 CREATE TABLE Category (
   CID int NOT NULL,
-  Name varchar(100) NOT NULL,
+  Name varchar(100) UNIQUE NOT NULL,
   PRIMARY KEY (CID)
 );
 
