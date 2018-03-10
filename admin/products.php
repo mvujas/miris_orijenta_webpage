@@ -19,8 +19,12 @@
 
             <div id="page-wrapper">
                 <?php
+                  $categories_tmp = getAllCategories();
+                  $categories = array();
+                  foreach($categories_tmp as &$ctg)
+                    $categories[$ctg["CID"]] = $ctg["Name"];
                   if(isset($_GET["edit"])) {
-                    $category = getCategoryByID($_GET["edit"]);
+                    list($product_name, $product_cid) = getProductByID($_GET["edit"]);
                 ?>
                   <div class="row">
                       <div class="col-lg-12">
@@ -30,35 +34,42 @@
                   </div>
                   <!-- /.row -->
                   <?php
-                    if($category) {
+                    if($product_name) {
+
+                      // Save changes to database
                       if(isset($_POST["saveChanges"])) {
-                        if(!isset($_POST["name"]) || strlen($_POST["name"]) < CATEGORY_MIN_NAME_LENGTH)
+                        if(!isset($_POST["name"]) || strlen($_POST["name"]) < PRODUCT_MIN_NAME_LENGTH)
                           echo "<div class=\"alert alert-danger alert-dismissable\">
                               <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>
-                              Ime kategorije mora imati bar " .CATEGORY_MIN_NAME_LENGTH. " karaktera.
+                              Ime proizvoda mora imati bar " .PRODUCT_MIN_NAME_LENGTH. " karaktera.
                           </div>";
-                        else if(strcmp($_POST["name"], $category) === 0)
+                        else if(!isset($_POST["category"]) || !isset($categories[$_POST["category"]]))
+                          echo "<div class=\"alert alert-danger alert-dismissable\">
+                              <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>
+                              Uneta kategorija ne postoji.
+                          </div>";
+                        else if(strcmp($_POST["name"], $product_name) === 0 && $_POST["category"] == $product_cid)
                           echo "<div class=\"alert alert-danger alert-dismissable\">
                               <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>
                               Niste napravili nikakvu izmenu.
                           </div>";
                         else {
                           $new_name = htmlspecialchars($_POST["name"]);
-                          $result = changeCategoryName($_GET["edit"], $new_name);
+                          $category = htmlspecialchars($_POST["category"]);
+                          $result = saveProductChanges($_GET["edit"], $new_name, $category);
                           if($result) {
-                            $category = $new_name;
+                            $product_name = $new_name;
+                            $product_cid = $category;
                             echo "<div class=\"alert alert-success alert-dismissable\">
                                 <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>
-                                Izmene su uspešno sačuvane. Vratite se na <a href=\"categories.php\" class=\"alert-link\">pregled kategorija</a>.
+                                Izmene su uspešno sačuvane. Vratite se na <a href=\"products.php\" class=\"alert-link\">pregled proizvoda</a>.
                             </div>";
                           }
                           else
                             echo "<div class=\"alert alert-danger alert-dismissable\">
                                 <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>
-                                Došlo je do greške prilikom čuvanja napravljenih izmena, pokušajte ponovo kasnije ili se vratite na <a href=\"categories.php\" class=\"alert-link\">pregled kategorija</a>.
+                                Došlo je do greške prilikom čuvanja napravljenih izmena, pokušajte ponovo kasnije ili se vratite na <a href=\"products.php\" class=\"alert-link\">pregled proizvoda</a>.
                             </div>";
-
-
                         }
                       }
 
@@ -67,15 +78,23 @@
                         <div class="col-lg-12">
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    Podaci o kategoriji
+                                    Podaci o proizvodu
                                 </div>
                                 <div class="panel-body">
                                     <div class="row">
                                         <div class="col-lg-12">
-                                            <form role="form" action="categories.php?edit=<?php echo htmlspecialchars($_GET["edit"]) ?>" method="post">
+                                            <form role="form" action="products.php?edit=<?php echo htmlspecialchars($_GET["edit"]) ?>" method="post">
                                                 <div class="form-group">
                                                     <label>Naziv</label>
-                                                    <input class="form-control" name="name" value="<?php echo $category ?>">
+                                                    <input class="form-control" name="name" value="<?php echo $product_name ?>">
+                                                </div>
+                                                <div class="form-group">
+                                                  <label>Kategorija</label>
+                                                  <select name="category" class="form-control">
+                                                    <?php foreach ($categories as $cid => $name) { ?>
+                                                        <option value="<?php echo $cid ?>"<?php if($product_cid == $cid) echo " selected" ?>><?php echo $name ?></option>"
+                                                    <?php } ?>
+                                                  </select>
                                                 </div>
                                                 <input type="submit" name="saveChanges" value="Sačuvaj" class="btn btn-success">
                                                 <a href="categories.php" class="btn btn-default">Povratak</a>
@@ -100,10 +119,6 @@
                   }
                   else {
                     $products = getAllProducts();
-                    $categories_tmp = getAllCategories();
-                    $categories = array();
-                    foreach($categories_tmp as &$ctg)
-                      $categories[$ctg["CID"]] = $ctg["Name"];
                 ?>
                   <div class="row">
                       <div class="col-lg-12">
@@ -162,8 +177,17 @@
                                 <div class="panel-body">
                                     <form role="form" action="categories.php#" method="post">
                                       <div class="form-group">
-                                        <label>Naziv kategorije</label>
+                                        <label>Naziv proizvoda</label>
                                         <input class="form-control" name="name" value="">
+                                      </div>
+                                      <div class="form-group">
+                                        <label>Kategorija</label>
+                                        <select name="category" class="form-control">
+                                          <?php
+                                            foreach ($categories as $cid => $name)
+                                              echo "<option value=\"$cid\">$name</option>"
+                                          ?>
+                                        </select>
                                       </div>
                                       <input type="hidden" name="action" value="addProduct">
                                       <input type="submit" value="Dodaj" class="btn btn-success">
@@ -213,6 +237,7 @@
         <!-- DataTables JavaScript -->
         <script src="js/dataTables/jquery.dataTables.min.js"></script>
         <script src="js/dataTables/dataTables.bootstrap.min.js"></script>
+        <?php if (!isset($_GET["edit"])): ?>
         <script>
             var table;
             $(document).ready(function() {
@@ -262,7 +287,6 @@
                   dataType: 'json',
                   data: 'action=deleteProduct&pid=' + productID,
                   success: function(result) {
-                    console.log(result);
                     if(result.success) {
                       table.row($("#product-" + productID)).remove().draw();
                       del.targetID = undefined;
@@ -316,7 +340,7 @@
             $("#add-product form").submit(function(e) {
               e.preventDefault();
               var data = $(this).serialize();
-              /*$.ajax({
+              $.ajax({
                 url: 'handlers/ajaxHandler.php',
                 type: 'post',
                 dataType: 'json',
@@ -325,7 +349,7 @@
                   console.log(result);
                   if(result.success) {
                     if(result.data.error)
-                      addCategoryErrorBox.setError("<div class=\"alert alert-danger alert-dismissable\">" +
+                      addProductErrorBox.setError("<div class=\"alert alert-danger alert-dismissable\">" +
                         "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
                         result.data.error +
                         "</div>");
@@ -335,21 +359,22 @@
                     }
                   }
                   else
-                  modal.setError("<div class=\"alert alert-danger alert-dismissable\">" +
-                    "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
-                    "Došlo je do greške prilikom dodavanja kategorije." +
-                    "</div>");
+                    addProductErrorBox.setError("<div class=\"alert alert-danger alert-dismissable\">" +
+                      "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
+                      "Došlo je do greške prilikom dodavanja proizvoda." +
+                      "</div>");
                 },
                 error: function() {
-                  modal.setError("<div class=\"alert alert-danger alert-dismissable\">" +
+                  addProductErrorBox.setError("<div class=\"alert alert-danger alert-dismissable\">" +
                     "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
-                    "Došlo je do greške prilikom dodavanja kategorije." +
+                    "Došlo je do greške prilikom dodavanja proizvoda." +
                     "</div>");
                 }
-              });*/
+              });
 
             });
         </script>
+        <?php endif; ?>
 
     </body>
 </html>

@@ -48,6 +48,24 @@
       if($result["success"])
         $result["success"] = deleteProduct($pid);
       break;
+    case "addProduct":
+      $result["data"] = $_POST["name"];
+      $result["data"] = array(
+        "error" => null
+      );
+
+      if(!isset($_POST["name"]) || strlen($_POST["name"]) < PRODUCT_MIN_NAME_LENGTH)
+        $result["data"]["error"] = "Ime proizvoda mora imati bar " .PRODUCT_MIN_NAME_LENGTH. " karaktera.";
+      else if(!isset($_POST["category"]))
+        $result["data"]["error"] = "Uneta kategorija ne postoji.";
+      else {
+        $new_name = htmlspecialchars($_POST["name"]);
+        $category = htmlspecialchars($_POST["category"]);
+        $query_result = addProduct($new_name, $category);
+        if(!$query_result)
+          $result["data"]["error"] = "Došlo je do greške prilikom dodavanja , pokušajte ponovo kasnije. Postoji mogućnost da ne postoji uneta kategorija kojoj bi proizovd trebao da pripada.";
+      }
+      break;
     default:
       $result["success"] = false;
   }

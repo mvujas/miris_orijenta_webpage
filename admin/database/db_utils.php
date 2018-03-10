@@ -90,15 +90,6 @@
     return $result;
   }
 
-  function changeCategoryName($ID, $name) {
-    $connection = connect_to_db();
-    $statement = mysqli_prepare($connection, "UPDATE Category SET Name = ? WHERE CID = ?");
-    mysqli_stmt_bind_param($statement, "si", $name, $ID);
-    $result = mysqli_stmt_execute($statement);
-    close($connection);
-    return $result;
-  }
-
   function deleteAllProductsFromCategory($ID) {
     $connection = connect_to_db();
     $statement = mysqli_prepare($connection, "DELETE FROM Product WHERE CID = ?");
@@ -159,19 +150,28 @@
 
   function getProductByID($ID) {
     $connection = connect_to_db();
-    $statement = mysqli_prepare($connection, "SELECT Name FROM Product WHERE PID = ?");
+    $statement = mysqli_prepare($connection, "SELECT Name, CID FROM Product WHERE PID = ?");
     mysqli_stmt_bind_param($statement, "i", $ID);
     mysqli_stmt_execute($statement);
-    mysqli_stmt_bind_result($statement, $result);
+    mysqli_stmt_bind_result($statement, $name, $cid);
     mysqli_stmt_fetch($statement);
     close($connection);
-    return $result;
+    return array($name, $cid);
   }
 
   function saveCategoryChanges($ID, $name) {
     $connection = connect_to_db();
     $statement = mysqli_prepare($connection, "UPDATE Category SET Name = ? WHERE CID = ?");
     mysqli_stmt_bind_param($statement, "si", $name, $ID);
+    $result = mysqli_stmt_execute($statement);
+    close($connection);
+    return $result;
+  }
+
+  function saveProductChanges($ID, $name, $category) {
+    $connection = connect_to_db();
+    $statement = mysqli_prepare($connection, "UPDATE Product SET Name = ?, CID = ? WHERE PID = ?");
+    mysqli_stmt_bind_param($statement, "sii", $name, $category, $ID);
     $result = mysqli_stmt_execute($statement);
     close($connection);
     return $result;

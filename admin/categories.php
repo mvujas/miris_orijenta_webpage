@@ -44,7 +44,7 @@
                           </div>";
                         else {
                           $new_name = htmlspecialchars($_POST["name"]);
-                          $result = changeCategoryName($_GET["edit"], $new_name);
+                          $result = saveCategoryChanges($_GET["edit"], $new_name);
                           if($result) {
                             $category = $new_name;
                             echo "<div class=\"alert alert-success alert-dismissable\">
@@ -208,6 +208,7 @@
         <!-- DataTables JavaScript -->
         <script src="js/dataTables/jquery.dataTables.min.js"></script>
         <script src="js/dataTables/dataTables.bootstrap.min.js"></script>
+        <?php if (!isset($_GET["edit"])): ?>
         <script>
             var table;
             $(document).ready(function() {
@@ -316,7 +317,6 @@
                 dataType: 'json',
                 data: data,
                 success: function(result) {
-                  console.log(result);
                   if(result.success) {
                     if(result.data.error)
                       addCategoryErrorBox.setError("<div class=\"alert alert-danger alert-dismissable\">" +
@@ -329,13 +329,13 @@
                     }
                   }
                   else
-                  modal.setError("<div class=\"alert alert-danger alert-dismissable\">" +
-                    "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
-                    "Došlo je do greške prilikom dodavanja kategorije." +
-                    "</div>");
+                    addCategoryErrorBox.setError("<div class=\"alert alert-danger alert-dismissable\">" +
+                      "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
+                      "Došlo je do greške prilikom dodavanja kategorije." +
+                      "</div>");
                 },
                 error: function() {
-                  modal.setError("<div class=\"alert alert-danger alert-dismissable\">" +
+                  addCategoryErrorBox.setError("<div class=\"alert alert-danger alert-dismissable\">" +
                     "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
                     "Došlo je do greške prilikom dodavanja kategorije." +
                     "</div>");
@@ -344,6 +344,7 @@
 
             });
         </script>
+        <?php endif; ?>
 
     </body>
 </html>
