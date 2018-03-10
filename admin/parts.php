@@ -45,6 +45,9 @@
                       <li>
                           <a href="categories.php"<?php if($current_script === "categories.php") echo " class=\"active\"" ?>><i class="fa fa-tasks fa-fw"></i> Kategorije</a>
                       </li>
+                      <li>
+                          <a href="products.php"<?php if($current_script === "products.php") echo " class=\"active\"" ?>><i class="fa fa-shopping-cart fa-fw"></i> Proizvodi</a>
+                      </li>
                   </ul>
               </div>
           </div>

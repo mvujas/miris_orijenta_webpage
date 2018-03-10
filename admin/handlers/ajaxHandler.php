@@ -37,9 +37,16 @@
         $query_result = addCategory($new_name);
         if(!$query_result)
           $result["data"]["error"] = "Došlo je do greške prilikom dodavanja , pokušajte ponovo kasnije. Postoji mogućnost da već postoji kategorija sa ovim imenom.";
-
-
       }
+      break;
+    case "deleteProduct":
+      $pid;
+      if(!isset($_POST["pid"]))
+        $result["success"] = false;
+      else
+        $pid = (int)$_POST["pid"];
+      if($result["success"])
+        $result["success"] = deleteProduct($pid);
       break;
     default:
       $result["success"] = false;

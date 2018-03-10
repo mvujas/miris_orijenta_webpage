@@ -136,9 +136,30 @@
     return $result;
   }
 
+  function getAllProducts() {
+    $connection = connect_to_db();
+    $query = mysqli_query($connection, "SELECT PID, Name, CID FROM Product");
+    $result = array();
+    while($row = mysqli_fetch_assoc($query))
+      $result[] = $row;
+    close($connection);
+    return $result;
+  }
+
   function getCategoryByID($ID) {
     $connection = connect_to_db();
     $statement = mysqli_prepare($connection, "SELECT Name FROM Category WHERE CID = ?");
+    mysqli_stmt_bind_param($statement, "i", $ID);
+    mysqli_stmt_execute($statement);
+    mysqli_stmt_bind_result($statement, $result);
+    mysqli_stmt_fetch($statement);
+    close($connection);
+    return $result;
+  }
+
+  function getProductByID($ID) {
+    $connection = connect_to_db();
+    $statement = mysqli_prepare($connection, "SELECT Name FROM Product WHERE PID = ?");
     mysqli_stmt_bind_param($statement, "i", $ID);
     mysqli_stmt_execute($statement);
     mysqli_stmt_bind_result($statement, $result);
