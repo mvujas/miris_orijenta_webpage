@@ -294,6 +294,16 @@
           map: map
         });
       }
+
+      $.ajax({
+        url: 'ajaxHandler.php',
+        type: 'post',
+        dataType: 'json',
+        data: 'action=getChoosenProducts',
+        success: function(result) {
+          console.log(result);
+        }
+      });
     </script>
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAw5bYJyrCi4y7RnihFd1BeTBFcBDg_8_w&callback=initMap">

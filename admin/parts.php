@@ -65,23 +65,8 @@
 
       <title><?php echo $title ?></title>
 
-      <!-- Bootstrap Core CSS -->
-      <link href="css/bootstrap.min.css" rel="stylesheet">
 
-      <!-- MetisMenu CSS -->
-      <link href="css/metisMenu.min.css" rel="stylesheet">
-
-      <!-- Timeline CSS -->
-      <link href="css/timeline.css" rel="stylesheet">
-
-      <!-- Custom CSS -->
-      <link href="css/startmin.css" rel="stylesheet">
-
-      <!-- Morris Charts CSS -->
-      <link href="css/morris.css" rel="stylesheet">
-
-      <!-- Custom Fonts -->
-      <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css">
+      <link rel="stylesheet" href="css/master.min.css">
 
       <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
       <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

@@ -1,5 +1,14 @@
 <?php
   require_once 'parts.php';
+  if(isset($_GET["addToChoosenProducts"])) {
+    addProductToChoosen($_GET["addToChoosenProducts"]);
+    header("Location: products.php");
+  }
+
+  if(isset($_GET["removeFromChoosenProducts"])) {
+    removeProductFromChoosen($_GET["removeFromChoosenProducts"]);
+    header("Location: products.php");
+  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -141,6 +150,7 @@
                                               <tr>
                                                   <th>Naziv proizvoda</th>
                                                   <th>Kategorija</th>
+                                                  <th>Status</th>
                                                   <th>Opcije</th>
                                               </tr>
                                           </thead>
@@ -151,9 +161,13 @@
                                                   <tr id=\"product-{$product["PID"]}\">
                                                     <td>{$product["Name"]}</td>
                                                     <td>{$categories[$product["CID"]]}</td>
+                                                    <td>".($product["Choosen"] ? "Preporučen" : "Regularan")."</td>
                                                     <td>
                                                       <center>
                                                         <a class=\"btn btn-primary\" href=\"products.php?edit={$product["PID"]}\"><i class=\"fa fa-pencil\"></i> Izmeni</a>
+                                                        ". (($product["Choosen"]) ?
+                                                        ("<a class=\"btn btn-warning\" href=\"products.php?removeFromChoosenProducts={$product["PID"]}\"><i class=\"fa fa-remove\"></i> Ukloni iz preporučenih</a>") :
+                                                        ("<a class=\"btn btn-success\" href=\"products.php?addToChoosenProducts={$product["PID"]}\"><i class=\"fa fa-plus\"></i> Dodaj u preporučene</a>")) . "
                                                         <a class=\"btn btn-danger productDeleteButton\" data-pid=\"{$product["PID"]}\" data-pname=\"{$product["Name"]}\"><i class=\"fa fa-trash-o\"></i> Obriši</a>
                                                       </center>
                                                     </td>
@@ -179,6 +193,10 @@
                                       <div class="form-group">
                                         <label>Naziv proizvoda</label>
                                         <input class="form-control" name="name" value="">
+                                      </div>
+                                      <div class="form-group">
+                                        <label>Slika</label>
+                                        <button type="button" style="padding: 15px; border: 1px solid gray; border-radius: 5px; color: gray" name="button">Ucitaj sliku</button>
                                       </div>
                                       <div class="form-group">
                                         <label>Kategorija</label>

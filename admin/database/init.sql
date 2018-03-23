@@ -17,7 +17,14 @@ CREATE TABLE Category (
 CREATE TABLE Product (
   PID int NOT NULL,
   Name varchar(100) NOT NULL,
+  Choosen TINYINT NOT NULL DEFAULT 0,
   CID int NOT NULL,
   PRIMARY KEY (PID),
   FOREIGN KEY (CID) REFERENCES Category(CID)
+);
+
+CREATE TABLE ChoosenProduct (
+  PID int NOT NULL,
+  PRIMARY KEY (PID),
+  FOREIGN KEY (PID) REFERENCES Product(PID)
 );

@@ -129,7 +129,17 @@
 
   function getAllProducts() {
     $connection = connect_to_db();
-    $query = mysqli_query($connection, "SELECT PID, Name, CID FROM Product");
+    $query = mysqli_query($connection, "SELECT PID, Name, CID, Choosen FROM Product");
+    $result = array();
+    while($row = mysqli_fetch_assoc($query))
+      $result[] = $row;
+    close($connection);
+    return $result;
+  }
+
+  function getChoosenProducts() {
+    $connection = connect_to_db();
+    $query = mysqli_query($connection, "SELECT P.PID, P.Name FROM ChoosenProduct CP, Product P WHERE CP.PID = P.PID LIMIT 8");
     $result = array();
     while($row = mysqli_fetch_assoc($query))
       $result[] = $row;
@@ -174,6 +184,40 @@
     mysqli_stmt_bind_param($statement, "sii", $name, $category, $ID);
     $result = mysqli_stmt_execute($statement);
     close($connection);
+    return $result;
+  }
+
+  function countChoosenProducts() {
+    $connection = connect_to_db();
+    $result = mysqli_query($connection, "SELECT COUNT(1) as N FROM ChoosenProduct");
+    $row = mysqli_fetch_assoc($result)["N"];
+    close($connection);
+    return $row | 0;
+  }
+
+  function addProductToChoosen($ID) {
+    $connection = connect_to_db();
+    $statement = mysqli_prepare($connection, "UPDATE Product SET Choosen = 1 WHERE PID = ?");
+    mysqli_stmt_bind_param($statement, "i", $ID);
+    $result = mysqli_stmt_execute($statement);
+    if($result) {
+      $statement = mysqli_prepare($connection, "INSERT INTO ChoosenProduct(PID) VALUES (?)");
+      mysqli_stmt_bind_param($statement, "i", $ID);
+      $result &= mysqli_stmt_execute($statement);
+    }
+    return $result;
+  }
+
+  function removeProductFromChoosen($ID) {
+    $connection = connect_to_db();
+    $statement = mysqli_prepare($connection, "DELETE FROM ChoosenProduct WHERE PID = ?");
+    mysqli_stmt_bind_param($statement, "i", $ID);
+    $result = mysqli_stmt_execute($statement);
+    if($result) {
+      $statement = mysqli_prepare($connection, "UPDATE Product SET Choosen = 0 WHERE PID = ?");
+      mysqli_stmt_bind_param($statement, "i", $ID);
+      $result &= mysqli_stmt_execute($statement);
+    }
     return $result;
   }
 

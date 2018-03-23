@@ -58,7 +58,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="#">
+                            <a href="products.php">
                                 <div class="panel-footer">
                                     <span class="pull-left">Pogledaj više</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
