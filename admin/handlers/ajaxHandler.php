@@ -11,8 +11,10 @@
     "data" => null
   );
 
+
   require_once '../config.php';
   require_once '../database/db_utils.php';
+  require_once 'imageHandler.php';
 
   switch($_POST["action"]) {
     case "deleteCategory":
@@ -58,10 +60,13 @@
         $result["data"]["error"] = "Ime proizvoda mora imati bar " .PRODUCT_MIN_NAME_LENGTH. " karaktera.";
       else if(!isset($_POST["category"]))
         $result["data"]["error"] = "Uneta kategorija ne postoji.";
+      else if(!isset($_FILES['image']))
+        $result["data"]["error"] = "Slika se mora uneti!";
       else {
         $new_name = htmlspecialchars($_POST["name"]);
         $category = htmlspecialchars($_POST["category"]);
-        $query_result = addProduct($new_name, $category);
+        $imageName = saveImage($_FILES['image']['tmp_name']);
+        $query_result = addProduct($new_name, $category, $imageName);
         if(!$query_result)
           $result["data"]["error"] = "Došlo je do greške prilikom dodavanja , pokušajte ponovo kasnije. Postoji mogućnost da ne postoji uneta kategorija kojoj bi proizovd trebao da pripada.";
       }

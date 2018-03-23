@@ -1,4 +1,6 @@
 <?php
+
+  var_dump(password_hash("admin123", PASSWORD_DEFAULT));
   require_once 'parts.php';
   if(isset($_GET["addToChoosenProducts"])) {
     addProductToChoosen($_GET["addToChoosenProducts"]);
@@ -196,7 +198,10 @@
                                       </div>
                                       <div class="form-group">
                                         <label>Slika</label>
-                                        <button type="button" style="padding: 15px; border: 1px solid gray; border-radius: 5px; color: gray" name="button">Ucitaj sliku</button>
+                                        <br>
+                                        <div id="some-image"></div>
+                                        <input id="some-input" type="file" accept="images/*">
+                                        <button type="button" name="button" onclick="getResult()">I dare you to click me!</button>
                                       </div>
                                       <div class="form-group">
                                         <label>Kategorija</label>
@@ -256,7 +261,13 @@
         <script src="js/dataTables/jquery.dataTables.min.js"></script>
         <script src="js/dataTables/dataTables.bootstrap.min.js"></script>
         <?php if (!isset($_GET["edit"])): ?>
+        <script src="js/croppie.min.js" charset="utf-8"></script>
         <script>
+            var velikiBlob = undefined;
+
+
+
+
             var table;
             $(document).ready(function() {
               table = $('#productsTable').DataTable({
@@ -357,12 +368,18 @@
 
             $("#add-product form").submit(function(e) {
               e.preventDefault();
-              var data = $(this).serialize();
+              var formData = new FormData();
+              formData.append('image', velikiBlob);
+              $(this).serializeArray().forEach(function(el) {
+                formData.append(el.name, el.value);
+              });
               $.ajax({
                 url: 'handlers/ajaxHandler.php',
                 type: 'post',
                 dataType: 'json',
-                data: data,
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function(result) {
                   console.log(result);
                   if(result.success) {
@@ -394,5 +411,40 @@
         </script>
         <?php endif; ?>
 
+        <script type="text/javascript">
+          var croppingImage = undefined;
+          $("#some-input").on('change', function() {
+            if (this.files && this.files[0]) {
+              var reader = new FileReader();
+              croppingImage = croppingImage = $('#some-image').croppie({
+                viewport: { width: 450, height: 300 },
+                boundary: { width: 600, height: 600 },
+                size: {width: 100, height: 250}
+              });
+              reader.onload = function(e) {
+                croppingImage.croppie('bind', {
+                  url: e.target.result
+                });
+              }
+
+              reader.readAsDataURL(this.files[0]);
+            }
+          });
+
+          var getResult = function() {
+            //on button click
+            croppingImage.croppie('result', 'blob').then(function(blob) {
+              velikiBlob = blob;
+              var objurl = window.URL.createObjectURL(blob);
+              var img = new Image();
+              img.src = objurl;
+              img.onload = function() {
+                $("#add-product").append(this);
+              }
+            });
+
+
+          };
+        </script>
     </body>
 </html>

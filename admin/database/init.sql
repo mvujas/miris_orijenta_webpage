@@ -18,6 +18,7 @@ CREATE TABLE Product (
   PID int NOT NULL,
   Name varchar(100) NOT NULL,
   Choosen TINYINT NOT NULL DEFAULT 0,
+  Image varchar(100) NOT NULL,
   CID int NOT NULL,
   PRIMARY KEY (PID),
   FOREIGN KEY (CID) REFERENCES Category(CID)

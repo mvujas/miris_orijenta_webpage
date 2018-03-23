@@ -79,12 +79,12 @@
     return $result;
   }
 
-  function addProduct($name, $category) {
+  function addProduct($name, $category, $imageName) {
     $ID;
     while(doesProductExist($ID = generateRandomIntKey()));
     $connection = connect_to_db();
-    $statement = mysqli_prepare($connection, "INSERT INTO Product(PID, Name, CID) VALUES (?, ?, ?)");
-    mysqli_stmt_bind_param($statement, "isi", $ID, $name, $category);
+    $statement = mysqli_prepare($connection, "INSERT INTO Product(PID, Name, Image, CID) VALUES (?, ?, ?, ?)");
+    mysqli_stmt_bind_param($statement, "issi", $ID, $name, $imageName, $category);
     $result = mysqli_stmt_execute($statement);
     close($connection);
     return $result;
