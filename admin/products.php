@@ -1,6 +1,6 @@
 <?php
+  var_dump($_SERVER["DOCUMENT_ROOT"]);
 
-  var_dump(password_hash("admin123", PASSWORD_DEFAULT));
   require_once 'parts.php';
   if(isset($_GET["addToChoosenProducts"])) {
     addProductToChoosen($_GET["addToChoosenProducts"]);
@@ -166,11 +166,11 @@
                                                     <td>".($product["Choosen"] ? "Preporučen" : "Regularan")."</td>
                                                     <td>
                                                       <center>
-                                                        <a class=\"btn btn-primary\" href=\"products.php?edit={$product["PID"]}\"><i class=\"fa fa-pencil\"></i> Izmeni</a>
+                                                        <a class=\"btn btn-primary\" title=\"Izmeni\" href=\"products.php?edit={$product["PID"]}\"><i class=\"fa fa-pencil\"></i></a>
                                                         ". (($product["Choosen"]) ?
-                                                        ("<a class=\"btn btn-warning\" href=\"products.php?removeFromChoosenProducts={$product["PID"]}\"><i class=\"fa fa-remove\"></i> Ukloni iz preporučenih</a>") :
-                                                        ("<a class=\"btn btn-success\" href=\"products.php?addToChoosenProducts={$product["PID"]}\"><i class=\"fa fa-plus\"></i> Dodaj u preporučene</a>")) . "
-                                                        <a class=\"btn btn-danger productDeleteButton\" data-pid=\"{$product["PID"]}\" data-pname=\"{$product["Name"]}\"><i class=\"fa fa-trash-o\"></i> Obriši</a>
+                                                        ("<a class=\"btn btn-warning\" title=\"Ukloni iz preporučenih\" href=\"products.php?removeFromChoosenProducts={$product["PID"]}\"><i class=\"fa fa-remove\"></i></a>") :
+                                                        ("<a class=\"btn btn-success\" title=\"Dodaj u preporučene\" href=\"products.php?addToChoosenProducts={$product["PID"]}\"><i class=\"fa fa-plus\"></i></a>")) . "
+                                                        <a class=\"btn btn-danger productDeleteButton\" title=\"Obriši\" data-pid=\"{$product["PID"]}\" data-pname=\"{$product["Name"]}\"><i class=\"fa fa-trash-o\"></i></a>
                                                       </center>
                                                     </td>
                                                   </tr>";
@@ -198,10 +198,8 @@
                                       </div>
                                       <div class="form-group">
                                         <label>Slika</label>
-                                        <br>
-                                        <div id="some-image"></div>
-                                        <input id="some-input" type="file" accept="images/*">
-                                        <button type="button" name="button" onclick="getResult()">I dare you to click me!</button>
+                                        <div id="cropping-image"></div>
+                                        <input id="choose-cropping-image" type="file" accept="image/jpeg">
                                       </div>
                                       <div class="form-group">
                                         <label>Kategorija</label>
@@ -263,10 +261,23 @@
         <?php if (!isset($_GET["edit"])): ?>
         <script src="js/croppie.min.js" charset="utf-8"></script>
         <script>
-            var velikiBlob = undefined;
+            var croppingImage = undefined;
+            $("#choose-cropping-image").on('change', function() {
+              if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                croppingImage = croppingImage = $('#cropping-image').croppie({
+                  viewport: { width: 450, height: 300 },
+                  boundary: { width: 600, height: 600 }
+                });
+                reader.onload = function(e) {
+                  croppingImage.croppie('bind', {
+                    url: e.target.result
+                  });
+                }
 
-
-
+                reader.readAsDataURL(this.files[0]);
+              }
+            });
 
             var table;
             $(document).ready(function() {
@@ -368,83 +379,53 @@
 
             $("#add-product form").submit(function(e) {
               e.preventDefault();
-              var formData = new FormData();
-              formData.append('image', velikiBlob);
-              $(this).serializeArray().forEach(function(el) {
-                formData.append(el.name, el.value);
-              });
-              $.ajax({
-                url: 'handlers/ajaxHandler.php',
-                type: 'post',
-                dataType: 'json',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(result) {
-                  console.log(result);
-                  if(result.success) {
-                    if(result.data.error)
+              var addForm = $(this);
+              croppingImage.croppie('result', 'blob').then(function(blob) {
+                var formData = new FormData();
+                formData.append('image', blob);
+
+                addForm.serializeArray().forEach(function(el) {
+                  formData.append(el.name, el.value);
+                });
+
+                $.ajax({
+                  url: 'handlers/ajaxHandler.php',
+                  type: 'post',
+                  dataType: 'json',
+                  data: formData,
+                  processData: false,
+                  contentType: false,
+                  success: function(result) {
+                    if(result.success) {
+                      if(result.data.error)
+                        addProductErrorBox.setError("<div class=\"alert alert-danger alert-dismissable\">" +
+                          "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
+                          result.data.error +
+                          "</div>");
+                      else {
+                        location.reload();
+                         $(window).scrollTop(0);
+                      }
+                    }
+                    else
                       addProductErrorBox.setError("<div class=\"alert alert-danger alert-dismissable\">" +
                         "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
-                        result.data.error +
+                        "Došlo je do greške prilikom dodavanja proizvoda." +
                         "</div>");
-                    else {
-                      location.reload();
-                       $(window).scrollTop(0);
-                    }
-                  }
-                  else
+                  },
+                  error: function() {
                     addProductErrorBox.setError("<div class=\"alert alert-danger alert-dismissable\">" +
                       "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
                       "Došlo je do greške prilikom dodavanja proizvoda." +
                       "</div>");
-                },
-                error: function() {
-                  addProductErrorBox.setError("<div class=\"alert alert-danger alert-dismissable\">" +
-                    "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\"\>&times;</button>" +
-                    "Došlo je do greške prilikom dodavanja proizvoda." +
-                    "</div>");
-                }
+                  }
+                });
+
               });
 
             });
         </script>
         <?php endif; ?>
 
-        <script type="text/javascript">
-          var croppingImage = undefined;
-          $("#some-input").on('change', function() {
-            if (this.files && this.files[0]) {
-              var reader = new FileReader();
-              croppingImage = croppingImage = $('#some-image').croppie({
-                viewport: { width: 450, height: 300 },
-                boundary: { width: 600, height: 600 },
-                size: {width: 100, height: 250}
-              });
-              reader.onload = function(e) {
-                croppingImage.croppie('bind', {
-                  url: e.target.result
-                });
-              }
-
-              reader.readAsDataURL(this.files[0]);
-            }
-          });
-
-          var getResult = function() {
-            //on button click
-            croppingImage.croppie('result', 'blob').then(function(blob) {
-              velikiBlob = blob;
-              var objurl = window.URL.createObjectURL(blob);
-              var img = new Image();
-              img.src = objurl;
-              img.onload = function() {
-                $("#add-product").append(this);
-              }
-            });
-
-
-          };
-        </script>
     </body>
 </html>

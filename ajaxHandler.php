@@ -13,6 +13,12 @@
     case "getChoosenProducts":
       $result = getChoosenProducts();
       break;
+    case "getAllCategories":
+      $result = getAllCategories();
+      break;
+    case "getAllProducts":
+      $result = getAllProducts();
+      break;
   }
 
   exit(json_encode($result));

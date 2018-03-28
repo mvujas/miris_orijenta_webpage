@@ -1,6 +1,5 @@
 <?php
-  define('PRODUCT_IMAGES_DIRECTORY', $_SERVER["DOCUMENT_ROOT"] . "/products_images/");
-  define('IMAGE_BASE_NAME_LEN', 50);
+  require_once '../config.php';
 
   function generateRandomString($length = 10) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

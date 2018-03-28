@@ -27,13 +27,13 @@
           <div class="collapse navbar-collapse" id="navbarText">
             <ul class="navbar-nav mr-auto">
               <li class="nav-item">
-                <a class="nav-link" href="#top">POČETNA</span></a>
+                <a class="nav-link" href="#top">POČETNA</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#about-us">O NAMA</span></a>
+                <a class="nav-link" href="#about-us">O NAMA</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#products">PROIZVODI</span></a>
+                <a class="nav-link" href="#products">PROIZVODI</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#contact">KONTAKT</a>
@@ -86,108 +86,8 @@
               <h2>PROIZVODI</h2>
               <span class="heading-underline"></span>
             </div>
-            <div class="recommendation">
-              Preporučujemo:
-            </div>
-            <div class="products">
-              <div class="row">
-
-                <div class="col-md-3 col-sm-6">
-                  <a href="#">
-                    <img src="img/food.jpg" alt="">
-                    <div class="hover-anim">
-                      <p>
-                        <i class="fas fa-search"></i><br>
-                        <span class="product-name">Pečena tarantula</span>
-                      </p>
-                    </div>
-                  </a>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                  <a href="#">
-                    <img src="img/food.jpg" alt="">
-                    <div class="hover-anim">
-                      <p>
-                        <i class="fas fa-search"></i><br>
-                        <span class="product-name">Pečena tarantula</span>
-                      </p>
-                    </div>
-                  </a>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                  <a href="#">
-                    <img src="img/food.jpg" alt="">
-                    <div class="hover-anim">
-                      <p>
-                        <i class="fas fa-search"></i><br>
-                        <span class="product-name">Pečena tarantula</span>
-                      </p>
-                    </div>
-                  </a>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                  <a href="#">
-                    <img src="img/food.jpg" alt="">
-                    <div class="hover-anim">
-                      <p>
-                        <i class="fas fa-search"></i><br>
-                        <span class="product-name">Pečena tarantula</span>
-                      </p>
-                    </div>
-                  </a>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                  <a href="#">
-                    <img src="img/food.jpg" alt="">
-                    <div class="hover-anim">
-                      <p>
-                        <i class="fas fa-search"></i><br>
-                        <span class="product-name">Pečena tarantula</span>
-                      </p>
-                    </div>
-                  </a>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                  <a href="#">
-                    <img src="img/food.jpg" alt="">
-                    <div class="hover-anim">
-                      <p>
-                        <i class="fas fa-search"></i><br>
-                        <span class="product-name">Pečena tarantula</span>
-                      </p>
-                    </div>
-                  </a>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                  <a href="#">
-                    <img src="img/food.jpg" alt="">
-                    <div class="hover-anim">
-                      <p>
-                        <i class="fas fa-search"></i><br>
-                        <span class="product-name">Pečena tarantula</span>
-                      </p>
-                    </div>
-                  </a>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                  <a href="#">
-                    <img src="img/food.jpg" alt="">
-                    <div class="hover-anim">
-                      <p>
-                        <i class="fas fa-search"></i><br>
-                        <span class="product-name">Pečena tarantula</span>
-                      </p>
-                    </div>
-                  </a>
-                </div>
-
-              </div>
-              <div class="products-see-more">
-
-
-                <a href="#" class="btn btn-light red-color">Pogledajte još</a>
-              </div>
-            </div>
+            <div id="recommended-products-loader"><img src="img/loader.gif" alt=""></div>
+            <div class="products"></div>
           </div>
         </div>
 
@@ -301,7 +201,33 @@
         dataType: 'json',
         data: 'action=getChoosenProducts',
         success: function(result) {
-          console.log(result);
+          var productsDiv = $("#products .products");
+
+          if(!result.length) {
+            productsDiv.append("<div class=\"recommendation\">Trenutno nema preporučenih proizvoda.<br>Pogledajte šta nudimo u <a href=\"catalog.html\">web katalogu</a>.</div>");
+            return;
+          }
+          productsDiv.append("<div class=\"recommendation\">Preporučujemo:</div>");
+          productsDiv.append("<div class=\"row\"></div>");
+          var productSpace = productsDiv.find(".row");
+
+          result.forEach(function(el) {
+            productSpace.append("<div class=\"col-md-3 col-sm-6\"><a href=\"#\"><img src=\"products_images/" + el.Image + "\" alt=\"\"><div class=\"hover-anim\"><p><i class=\"fas fa-search\"></i><br><span class=\"product-name\">" + el.Name + "</span></p></div></a></div>");
+          });
+
+          productsDiv.append("<div class=\"products-see-more\"><a href=\"catalog.html\" class=\"btn btn-light red-color\">Pogledajte još</a></div>");
+        },
+        error: function() {
+          $("#products .products").append("<div class=\"recommendation\">Došlo je do greške prilikom učitavanja proizvoda.<br>Pokušajte kasnije ili pogledajte šta nudimo u <a href=\"catalog.html\">web katalogu</a>.</div>");
+        },
+        complete: function() {
+          var loader = $("#recommended-products-loader");
+          loader.delay(1000).animate({
+            opacity: 0
+          }, 1000, function() {
+            $("#products .products").fadeIn(500);
+            loader.css("display", "none");
+          });
         }
       });
     </script>

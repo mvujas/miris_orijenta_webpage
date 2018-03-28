@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Proizvodi</title>
+
+    <script src="js/fontawesome-all.min.js" charset="utf-8"></script>
+
+    <link rel="stylesheet" href="css/style.min.css">
+  </head>
+  <body id="top">
+
+    <!-- Header of page -->
+    <div class="page-header">
+      <div class="logo">
+        <img src="img/logo1000x250.png" alt="Miris orijenta">
+      </div>
+      <div class="region-1"></div>
+      <div class="region-2"></div>
+      <nav id="main-navigation" class="navbar navbar-expand-sm navbar-light">
+        <div class="container">
+          <span></span>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="#top">POČETNA</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#about-us">O NAMA</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#products">PROIZVODI</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#contact">KONTAKT</a>
+              </li>
+            </ul>
+            <span class="socials">
+              <a href="https://www.facebook.com/Miris-Orijenta-315593112178743/" target="_blank"><img src="img/facebook.png" alt="Facebook"></a>
+            </span>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+
+    <!-- Main body -->
+    <div id="main-products-body">
+      <div class="row" style="padding-top: 20px;">
+        <div class="col-md-1"></div>
+        <div class="col-md-3" id="categories"></div>
+        <div class="col-md-7" id="product-list"></div>
+        <div class="col-md-1"></div>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js" charset="utf-8"></script>
+    <script type="text/javascript">
+      $('body').scrollspy({
+        target: '#main-navigation',
+        offset: 60
+      });
+
+      initial_top = $(".navbar").offset().top;
+      var checkNavbarState = function() {
+        var scrollValue = $(window).scrollTop();
+        if (scrollValue > initial_top)
+             $('.navbar').addClass('fixed-top');
+        else
+          $('.navbar').removeClass('fixed-top');
+      };
+      $(window).on('scroll', checkNavbarState);
+      $(document).ready(checkNavbarState);
+
+      var NAVBAR_HEIGHT = 58;
+      // Select all links with hashes
+      $('a[href*="#"]')
+      // Remove links that don't actually link to anything
+      .not('[href="#"]')
+      .not('[href="#0"]')
+      .click(function(event) {
+        // On-page links
+        if (
+          location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '')
+          &&
+          location.hostname == this.hostname
+        ) {
+          // Figure out element to scroll to
+          var target = $(this.hash);
+          target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+          // Does a scroll target exist?
+          if (target.length) {
+            // Only prevent default if animation is actually gonna happen
+            event.preventDefault();
+            $('html, body').animate({
+              scrollTop: target.offset().top - NAVBAR_HEIGHT
+            }, 1000, function() {
+              // Callback after animation
+              // Must change focus!
+              var $target = $(target);
+              $target.focus();
+              if ($target.is(":focus")) { // Checking if the target was focused
+                return false;
+              } else {
+                $target.attr('tabindex','-1'); // Adding tabindex for elements not focusable
+                $target.focus(); // Set focus again
+              };
+            });
+          }
+        }
+      });
+
+      $.ajax({
+        url: 'ajaxHandler.php',
+        type: 'post',
+        dataType: 'json',
+        data: 'action=getAllCategories',
+        success: function(result) {
+          var categoryLists = new Array();
+          var categories = $("#categories");
+          categories.append("<div class=\"list-group\" role=\"tablist\"></div>")
+          var categoryList = categories.find(".list-group");
+          categoryList.append("<a class=\"list-group-item list-group-item-action active\" data-toggle=\"list\" id=\"list-all-list\" href=\"#allProducts\" role=\"tab\" aria-controls=\"allProducts\">Sve</a>");
+          var products = $("#product-list");
+          products.append("<div class=\"tab-content\"></div>");
+          var productContent = products.find("div.tab-content");
+          productContent.append("<div class=\"tab-pane fade show active\" id=\"allProducts\" role=\"tabpanel\" aria-labelledby=\"list-all-list\"><div class=\"row\"></div></div>");
+          var allProducts = $("#allProducts > .row");
+          result.forEach(function(el) {
+            categoryList.append("<a class=\"list-group-item list-group-item-action\" data-toggle=\"list\" id=\"category-" + el.CID + "-list\" href=\"#category-" + el.CID + "\" role=\"tab\" aria-controls=\"category-" + el.CID + "\">" + el.Name + "</a>");
+            productContent.append("<div class=\"tab-pane fade\" id=\"category-" + el.CID + "\" role=\"tabpanel\" aria-labelledby=\"category-" + el.CID + "-list\"><div class=\"row\"></div></div>");
+            categoryLists[el.CID] = $("#category-" + el.CID + " > .row");
+          });
+
+
+
+          $.ajax({
+            url: 'ajaxHandler.php',
+            type: 'post',
+            dataType: 'json',
+            data: 'action=getAllProducts',
+            success: function(result) {
+              result.forEach(function(el) {
+                var newElement = "<div class=\"col-md-4\"><img style=\"width: 100%\" src=\"products_images/" + el.Image + "\"><p><center>" + el.Name + "</center></p></div>";
+                allProducts.append(newElement);
+                categoryLists[el.CID].append(newElement);
+              });
+            },
+            error: function() {
+              console.log('Greska!');
+            }
+          });
+
+
+        },
+        error: function() {
+          console.log('Greska!');
+        }
+      });
+    </script>
+  </body>
+</html>

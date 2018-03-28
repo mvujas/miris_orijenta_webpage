@@ -129,7 +129,7 @@
 
   function getAllProducts() {
     $connection = connect_to_db();
-    $query = mysqli_query($connection, "SELECT PID, Name, CID, Choosen FROM Product");
+    $query = mysqli_query($connection, "SELECT PID, Name, CID, Choosen, Image FROM Product");
     $result = array();
     while($row = mysqli_fetch_assoc($query))
       $result[] = $row;
@@ -139,7 +139,7 @@
 
   function getChoosenProducts() {
     $connection = connect_to_db();
-    $query = mysqli_query($connection, "SELECT P.PID, P.Name FROM ChoosenProduct CP, Product P WHERE CP.PID = P.PID LIMIT 8");
+    $query = mysqli_query($connection, "SELECT P.PID, P.Name, P.Image FROM ChoosenProduct CP, Product P WHERE CP.PID = P.PID LIMIT 8");
     $result = array();
     while($row = mysqli_fetch_assoc($query))
       $result[] = $row;

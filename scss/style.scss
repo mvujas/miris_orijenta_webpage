@@ -178,41 +178,52 @@ a:hover {
   text-align: center;
 }
 
-.products {
-  .row {
-    & > div {
-      padding: 0;
-      margin: 0;
-      position: relative;
-      img {
-        width: 100%;
-      }
+#products {
+  a {
+    font-weight: bold;
+    color: white;
+    &:hover {
+      border-bottom: 1px dashed white;
+    }
+  }
 
-      .hover-anim {
-        opacity: 0;
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        background: rgba(0, 0, 0, .7);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        @include transition(opacity, 500ms, ease);
-        p {
-          color: white;
-          text-align: center;
-          font-size: 25px;
-          line-height: 15px;
-          .product-name {
-            font-size: 15px;
+  .products {
+    display: none;
+    .row {
+      & > div {
+        padding: 0;
+        margin: 0;
+        position: relative;
+        img {
+          width: 100%;
+        }
+
+        .hover-anim {
+          opacity: 0;
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          background: rgba(0, 0, 0, .7);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          @include transition(opacity, 500ms, ease);
+          p {
+            color: white;
+            text-align: center;
+            font-size: 25px;
+            line-height: 15px;
+            .product-name {
+              font-size: 15px;
+            }
           }
         }
-      }
 
-      &:hover .hover-anim {
-        opacity: 1;
+        &:hover .hover-anim {
+          opacity: 1;
+        }
       }
     }
   }
@@ -254,4 +265,20 @@ a:hover {
     color: white;
     font-weight: bold;
   }
+}
+
+
+#main-products-body {
+  #categories {
+    .list-group {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 100px;
+    }
+  }
+}
+
+#recommended-products-loader {
+  text-align: center;
+  padding: 10px 0;
 }
